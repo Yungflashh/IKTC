@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f5f1e8;
+  --ink: #0b1220;
+  --brand: #f59e0b;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #0b1220;
+  color: #f5f1e8;
+}
+
+* {
+  border-color: theme("colors.line");
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all duration-200 select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-ink hover:bg-brand-400 active:scale-[0.98] shadow-cta;
+  }
+  .btn-dark {
+    @apply btn bg-ink text-canvas hover:bg-ink-800 active:scale-[0.98];
+  }
+  .btn-outline {
+    @apply btn border border-ink/20 text-ink hover:bg-ink hover:text-canvas;
+  }
+  .btn-ghost {
+    @apply btn text-ink/80 hover:text-ink hover:bg-ink/5;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-ink/15 bg-paper/70 px-3 py-1 text-xs font-medium text-ink/80 backdrop-blur;
+  }
+
+  .card {
+    @apply rounded-2xl bg-paper border border-line shadow-card;
+  }
+
+  .section {
+    @apply py-20 md:py-28;
+  }
+
+  .h-display {
+    @apply font-display font-semibold tracking-tightest;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/60;
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    transition: background-size 0.25s ease;
+  }
+  .link-underline:hover {
+    background-size: 0 1px;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-ink/15 bg-paper px-4 py-3 text-sm text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10 placeholder:text-ink/40;
+  }
+  .label {
+    @apply block text-sm font-medium text-ink mb-1.5;
+  }
+  .help {
+    @apply text-xs text-ink/50 mt-1;
+  }
+  .error {
+    @apply text-xs text-red-600 mt-1;
+  }
+}
+
+@layer utilities {
+  .grain {
+    background-image:
+      radial-gradient(rgba(11, 18, 32, 0.04) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  .dots {
+    background-image: radial-gradient(rgba(11, 18, 32, 0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgba(11, 18, 32, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11, 18, 32, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Marquee track duplicate width */
+.marquee-track {
+  display: flex;
+  width: max-content;
+}

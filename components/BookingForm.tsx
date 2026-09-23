@@ -199,7 +199,6 @@ export default function BookingForm({ event }: { event: EventItem }) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       <div className="lg:col-span-8">
         <div className="card p-6 md:p-10">
-          {/* Stepper */}
           <ol className="flex items-center gap-2 md:gap-4 mb-8 flex-wrap">
             {steps.map(({ id, label, Icon }, idx) => (
               <li key={id} className="flex items-center gap-2">
@@ -465,7 +464,6 @@ export default function BookingForm({ event }: { event: EventItem }) {
         </div>
       </div>
 
-      {/* Summary */}
       <aside className="lg:col-span-4">
         <div className="sticky top-28 card p-6">
           <p className="eyebrow">Order summary</p>

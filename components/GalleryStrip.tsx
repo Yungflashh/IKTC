@@ -9,8 +9,6 @@ import Lightbox from "./Lightbox";
 import { gallery } from "@/lib/gallery";
 import { Reveal, Stagger, StaggerItem } from "./Motion";
 
-// A curated grid for the landing page.
-// Uses a defined 4-col mosaic layout so it renders identically to design.
 const featured = gallery.slice(0, 8);
 
 const layoutClasses = [

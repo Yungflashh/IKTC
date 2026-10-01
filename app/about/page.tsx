@@ -3,6 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import { Reveal, Stagger, StaggerItem } from "@/components/Motion";
 import CTA from "@/components/CTA";
 import { Award, Compass, Heart, Sprout } from "lucide-react";
+import { getRemoteTeam, getRemoteMilestones } from "@/lib/api";
 
 export const metadata = { title: "About" };
 
@@ -29,7 +30,7 @@ const values = [
   },
 ];
 
-const team = [
+const defaultTeam = [
   {
     name: "Timilehin Adeyemi",
     role: "Community Lead",
@@ -62,7 +63,7 @@ const team = [
   },
 ];
 
-const timeline = [
+const defaultTimeline = [
   { year: "2021", title: "Six friends, one café", body: "IKTC begins as a Saturday coffee meetup in Ikorodu." },
   { year: "2022", title: "First cohort", body: "50 members complete our inaugural frontend circle." },
   { year: "2023", title: "Ikorodu Hackathon 1.0", body: "80 hackers, 20 teams, one weekend of building for Lagos." },
@@ -70,7 +71,22 @@ const timeline = [
   { year: "2026", title: "Community of 3,200+", body: "Weekly circles, six programs, and a permanent home." },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [remoteTeam, remoteMilestones] = await Promise.all([
+    getRemoteTeam(),
+    getRemoteMilestones(),
+  ]);
+
+  const teamList = remoteTeam.length > 0 ? remoteTeam : defaultTeam;
+  const timelineList =
+    remoteMilestones.length > 0
+      ? remoteMilestones.map((m) => ({
+          year: m.year,
+          title: m.title,
+          body: m.description,
+        }))
+      : defaultTimeline;
+
   return (
     <>
       <PageHeader
@@ -174,7 +190,7 @@ export default function AboutPage() {
           <div className="mt-14 relative">
             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-line" />
             <ul className="space-y-10">
-              {timeline.map((t, i) => (
+              {timelineList.map((t, i) => (
                 <Reveal key={t.year} delay={i * 0.05}>
                   <li className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12">
                     <div className={i % 2 === 0 ? "md:text-right md:pr-12" : "md:col-start-2 md:pl-12"}>
@@ -207,7 +223,7 @@ export default function AboutPage() {
             </Reveal>
           </div>
           <Stagger className="mt-14 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {team.map((m) => (
+            {teamList.map((m) => (
               <StaggerItem key={m.name}>
                 <div className="group">
                   <div className="relative aspect-square overflow-hidden rounded-2xl">

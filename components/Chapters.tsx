@@ -1,8 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MapPin, Users } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "./Motion";
+import { getRemoteChapters } from "@/lib/api";
 
-const chapters = [
+type ChapterItem = {
+  name: string;
+  members: number;
+  active: boolean;
+  since: string;
+};
+
+const defaultChapters: ChapterItem[] = [
   { name: "Ikorodu Central", members: 620, active: true, since: "2021" },
   { name: "Ikorodu North", members: 410, active: true, since: "2022" },
   { name: "Ijede", members: 285, active: true, since: "2022" },
@@ -15,6 +26,16 @@ const chapters = [
 ];
 
 export default function Chapters() {
+  const [chapterList, setChapterList] = useState<ChapterItem[]>(defaultChapters);
+
+  useEffect(() => {
+    getRemoteChapters().then((data) => {
+      if (data && data.length > 0) {
+        setChapterList(data);
+      }
+    });
+  }, []);
+
   return (
     <section className="section">
       <div className="container grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -51,7 +72,7 @@ export default function Chapters() {
 
         <div className="lg:col-span-7">
           <Stagger className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {chapters.map((c) => (
+            {chapterList.map((c) => (
               <StaggerItem key={c.name}>
                 <div
                   className={`card p-5 flex items-center justify-between gap-4 ${

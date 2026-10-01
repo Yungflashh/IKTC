@@ -1,7 +1,17 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Reveal, Stagger, StaggerItem } from "./Motion";
+import { getRemotePastSpeakers } from "@/lib/api";
 
-const speakers = [
+type SpeakerItem = {
+  name: string;
+  role: string;
+  avatar: string;
+};
+
+const defaultSpeakers: SpeakerItem[] = [
   {
     name: "Bosun Tijani",
     role: "Minister of Communications",
@@ -65,6 +75,16 @@ const speakers = [
 ];
 
 export default function PastSpeakers() {
+  const [speakerList, setSpeakerList] = useState<SpeakerItem[]>(defaultSpeakers);
+
+  useEffect(() => {
+    getRemotePastSpeakers().then((data) => {
+      if (data && data.length > 0) {
+        setSpeakerList(data);
+      }
+    });
+  }, []);
+
   return (
     <section className="section">
       <div className="container">
@@ -82,7 +102,7 @@ export default function PastSpeakers() {
         </div>
 
         <Stagger className="mt-14 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
-          {speakers.map((s) => (
+          {speakerList.map((s) => (
             <StaggerItem key={s.name}>
               <div className="group">
                 <div className="relative aspect-square overflow-hidden rounded-2xl">

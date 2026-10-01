@@ -1,10 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Quote } from "lucide-react";
 import { Stagger, StaggerItem, Reveal } from "./Motion";
+import { getRemoteTestimonials } from "@/lib/api";
 
-const items = [
+type TestimonialItem = {
+  quote: string;
+  name: string;
+  role: string;
+  avatar: string;
+};
+
+const defaultItems: TestimonialItem[] = [
   {
     quote:
       "IKTC turned my Saturdays into the best learning of my life. I got my first frontend job three months after the bootcamp.",
@@ -56,6 +65,16 @@ const items = [
 ];
 
 export default function Testimonials() {
+  const [items, setItems] = useState<TestimonialItem[]>(defaultItems);
+
+  useEffect(() => {
+    getRemoteTestimonials().then((data) => {
+      if (data && data.length > 0) {
+        setItems(data);
+      }
+    });
+  }, []);
+
   return (
     <section className="section">
       <div className="container">

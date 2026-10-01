@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { upcomingEvents } from "@/lib/events";
+import { getRemoteEvents } from "@/lib/api";
 import EventCard from "./EventCard";
 import { Reveal } from "./Motion";
 
-export default function UpcomingEvents() {
-  const list = upcomingEvents(3);
+export default async function UpcomingEvents() {
+  const remote = await getRemoteEvents({ upcoming: true });
+  const list = remote.length > 0 ? remote.slice(0, 3) : upcomingEvents(3);
   return (
     <section className="section bg-ink text-canvas rounded-t-[2.5rem]">
       <div className="container">

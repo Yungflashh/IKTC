@@ -3,9 +3,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+import { getRemoteStats } from "@/lib/api";
+
 type Stat = { label: string; value: number; suffix?: string };
 
-const stats: Stat[] = [
+const defaultStats: Stat[] = [
   { label: "Community members", value: 3200, suffix: "+" },
   { label: "Events hosted", value: 84 },
   { label: "Mentorship hours", value: 12400, suffix: "+" },
@@ -43,11 +45,21 @@ function Counter({ to, suffix }: { to: number; suffix?: string }) {
 }
 
 export default function Stats() {
+  const [items, setItems] = useState<Stat[]>(defaultStats);
+
+  useEffect(() => {
+    getRemoteStats().then((data) => {
+      if (data && data.length > 0) {
+        setItems(data.map((d) => ({ label: d.label, value: d.value, suffix: d.suffix })));
+      }
+    });
+  }, []);
+
   return (
     <section className="section">
       <div className="container">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
-          {stats.map((s, i) => (
+          {items.map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 20 }}
@@ -67,3 +79,4 @@ export default function Stats() {
     </section>
   );
 }
+

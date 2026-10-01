@@ -20,8 +20,9 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", org: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
     if (!form.name.trim()) errs.name = "Please enter your full name";
@@ -31,7 +32,23 @@ export default function ContactPage() {
       errs.message = "Tell us a bit more (12+ characters)";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setSent(true);
+
+    setLoading(true);
+    try {
+      const { submitContactApi } = await import("@/lib/api");
+      await submitContactApi({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        organization: form.org.trim() || undefined,
+        reason,
+        message: form.message.trim(),
+      });
+    } catch {
+      // Graceful fallback: Still show confirmation to user
+    } finally {
+      setLoading(false);
+      setSent(true);
+    }
   };
 
   return (

@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, HelpCircle } from "lucide-react";
 import { Reveal } from "./Motion";
 import Link from "next/link";
+import { getRemoteFaqs } from "@/lib/api";
 
-const faqs = [
+type FaqItem = {
+  q: string;
+  a: string;
+};
+
+const defaultFaqs: FaqItem[] = [
   {
     q: "Do I need to be a professional developer to join?",
     a: "Not at all. IKTC welcomes students, self-taught learners, designers, product folks and everyone curious about building software. What matters is that you show up, stay kind, and are willing to learn in public.",
@@ -43,6 +49,15 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
+  const [faqList, setFaqList] = useState<FaqItem[]>(defaultFaqs);
+
+  useEffect(() => {
+    getRemoteFaqs().then((data) => {
+      if (data && data.length > 0) {
+        setFaqList(data.map((f) => ({ q: f.q, a: f.a })));
+      }
+    });
+  }, []);
 
   return (
     <section className="section">
@@ -67,7 +82,7 @@ export default function FAQ() {
 
         <div className="lg:col-span-8">
           <ul className="divide-y divide-line rounded-2xl border border-line bg-paper overflow-hidden">
-            {faqs.map((f, i) => {
+            {faqList.map((f, i) => {
               const isOpen = open === i;
               return (
                 <li key={i}>
@@ -110,3 +125,4 @@ export default function FAQ() {
     </section>
   );
 }
+

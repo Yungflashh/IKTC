@@ -1,7 +1,16 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Reveal } from "./Motion";
 import { Newspaper } from "lucide-react";
+import { getRemotePress } from "@/lib/api";
 
-const quotes = [
+type PressItem = {
+  quote: string;
+  outlet: string;
+};
+
+const defaultQuotes: PressItem[] = [
   {
     quote:
       "IKTC has quietly become one of the most active tech communities in Lagos.",
@@ -20,6 +29,16 @@ const quotes = [
 ];
 
 export default function Press() {
+  const [pressList, setPressList] = useState<PressItem[]>(defaultQuotes);
+
+  useEffect(() => {
+    getRemotePress().then((data) => {
+      if (data && data.length > 0) {
+        setPressList(data.map((p) => ({ quote: p.quote, outlet: p.outlet })));
+      }
+    });
+  }, []);
+
   return (
     <section className="section bg-canvas">
       <div className="container">
@@ -33,7 +52,7 @@ export default function Press() {
         </Reveal>
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {quotes.map((q, i) => (
+          {pressList.map((q, i) => (
             <Reveal key={q.outlet} delay={i * 0.08}>
               <figure className="card p-8 h-full">
                 <blockquote className="font-display text-xl leading-snug text-ink">
@@ -50,3 +69,4 @@ export default function Press() {
     </section>
   );
 }
+

@@ -38,7 +38,12 @@ const circles = [
   },
 ];
 
-export default function ProgramsPage() {
+import { getRemotePrograms } from "@/lib/api";
+
+export default async function ProgramsPage() {
+  const remoteCircles = await getRemotePrograms();
+  const displayCircles = remoteCircles.length > 0 ? remoteCircles : circles;
+
   return (
     <>
       <PageHeader
@@ -64,7 +69,7 @@ export default function ProgramsPage() {
             </Reveal>
           </div>
           <Stagger className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {circles.map((c) => (
+            {displayCircles.map((c) => (
               <StaggerItem key={c.title}>
                 <div className="card overflow-hidden h-full flex flex-col md:flex-row">
                   <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto">

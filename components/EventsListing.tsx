@@ -18,12 +18,24 @@ const categories: (EventCategory | "All")[] = [
 ];
 
 export default function EventsListing() {
+  const [eventList, setEventList] = useState<EventItem[]>(events);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<(typeof categories)[number]>("All");
 
+  // Fetch live events from MySQL database
+  useState(() => {
+    import("@/lib/api").then(({ getRemoteEvents }) => {
+      getRemoteEvents().then((remoteEvents) => {
+        if (remoteEvents.length > 0) {
+          setEventList(remoteEvents);
+        }
+      });
+    });
+  });
+
   const filtered = useMemo<EventItem[]>(() => {
     const now = Date.now();
-    return events
+    return eventList
       .filter((e) => (cat === "All" ? true : e.category === cat))
       .filter((e) => {
         if (!q.trim()) return true;

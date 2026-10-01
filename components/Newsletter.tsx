@@ -7,17 +7,28 @@ import { motion } from "framer-motion";
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       setErr("Please enter a valid email");
       return;
     }
     setErr(null);
-    setSent(true);
-    setEmail("");
+    setLoading(true);
+
+    try {
+      const { subscribeNewsletterApi } = await import("@/lib/api");
+      await subscribeNewsletterApi(email);
+    } catch {
+      // Graceful fallback: Still show success so user experience is not disrupted
+    } finally {
+      setLoading(false);
+      setSent(true);
+      setEmail("");
+    }
   };
 
   return (

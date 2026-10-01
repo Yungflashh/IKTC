@@ -86,9 +86,13 @@ export default function BookingForm({ event }: { event: EventItem }) {
   };
   const back = () => setStep((s) => Math.max(1, s - 1));
 
-  const finalize = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const finalize = async () => {
     if (!validateStep(4)) return;
-    const booking: Booking = {
+    setIsSubmitting(true);
+
+    let booking: Booking = {
       id: crypto.randomUUID(),
       eventSlug: event.slug,
       eventTitle: event.title,
@@ -104,9 +108,39 @@ export default function BookingForm({ event }: { event: EventItem }) {
       totalPaid: total,
       reference: generateReference(),
     };
-    saveBooking(booking);
-    setConfirmed(booking);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    try {
+      const { createRemoteBooking } = await import("@/lib/api");
+      const remoteRes = await createRemoteBooking({
+        eventSlug: event.slug,
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        ticketType: form.ticketType,
+        tickets: form.tickets,
+        paymentMethod: form.paymentMethod,
+        dietary: form.dietary.trim() || undefined,
+        notes: form.notes.trim() || undefined,
+      });
+
+      if (remoteRes.booking) {
+        booking = remoteRes.booking;
+      }
+
+      // If paid event and Paystack authorization URL is returned, redirect
+      if (remoteRes.payment?.authorization_url) {
+        saveBooking(booking);
+        window.location.href = remoteRes.payment.authorization_url;
+        return;
+      }
+    } catch {
+      // Graceful fallback to client-side persistence if backend is offline
+    } finally {
+      setIsSubmitting(false);
+      saveBooking(booking);
+      setConfirmed(booking);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const copyRef = () => {

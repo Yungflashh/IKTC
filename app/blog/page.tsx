@@ -64,8 +64,12 @@ const posts = [
   },
 ];
 
-export default function BlogPage() {
-  const [featured, ...rest] = posts;
+import { getRemoteBlogPosts } from "@/lib/api";
+
+export default async function BlogPage() {
+  const remotePosts = await getRemoteBlogPosts();
+  const displayPosts = remotePosts.length > 0 ? remotePosts : posts;
+  const [featured, ...rest] = displayPosts;
   return (
     <>
       <PageHeader

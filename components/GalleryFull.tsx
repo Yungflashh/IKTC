@@ -24,12 +24,24 @@ function spanClass(item: GalleryItem) {
 }
 
 export default function GalleryFull() {
+  const [items, setItems] = useState<GalleryItem[]>(gallery);
   const [cat, setCat] = useState<(typeof categories)[number]>("All");
   const [open, setOpen] = useState<number | null>(null);
 
+  // Fetch dynamic compressed WebP images from MySQL database
+  useState(() => {
+    import("@/lib/api").then(({ getRemoteGallery }) => {
+      getRemoteGallery().then((remoteItems) => {
+        if (remoteItems.length > 0) {
+          setItems(remoteItems as GalleryItem[]);
+        }
+      });
+    });
+  });
+
   const filtered = useMemo(
-    () => (cat === "All" ? gallery : gallery.filter((g) => g.category === cat)),
-    [cat]
+    () => (cat === "All" ? items : items.filter((g) => g.category === cat)),
+    [cat, items]
   );
 
   return (
